@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enterprise.inventory.domain.InvoiceDetail;
 import com.enterprise.inventory.repository.InvoiceRepository;
 
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/enterprise-app/invoice")
 public class InvoiceController {
@@ -37,23 +41,30 @@ public class InvoiceController {
 		return invoiceDetails;
 	}
 	
-	@GetMapping("")
-	InvoiceDetail retrieveInvoice(Long id)
+	@GetMapping("{id}")
+	InvoiceDetail retrieveInvoice(@RequestParam Long id)
 	{
 		return invoiceRepo.findById(id).get();
 	}
 	
-	@PostMapping("/update")
-	InvoiceDetail updateInvoice(@RequestBody InvoiceDetail invoiceDetail)
+	@PutMapping("{id}")
+	InvoiceDetail updateInvoice(@RequestBody InvoiceDetail invoiceDetail,@RequestParam Long id)
 	{
 		invoiceDetail=invoiceRepo.save(invoiceDetail);
 		return invoiceDetail;
 	}
 	
-	@DeleteMapping
-	String deleteInvoice(InvoiceDetail invoiceDetail)
+	@DeleteMapping("{id}")
+	String deleteInvoice(@RequestParam Long id)
 	{
-		invoiceRepo.delete(invoiceDetail);
+		invoiceRepo.deleteById(id);
+		return "OK";
+	}
+	
+	@DeleteMapping("")
+	String deleteInvoices()
+	{
+		invoiceRepo.deleteAll();
 		return "OK";
 	}
 
